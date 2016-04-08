@@ -3,9 +3,6 @@
 import json, time, math
 import pyvddk
 from pyVmomi import vim, vmodl
-from vsdk.VsdkUtil import getLatestGenId, createSpecList, getOvfPath,\
-getBackupFile, getVMName, getDatastoreName, setBackupFile, setDatastoreName,\
-getDiskCapacity, getPrevChangeId, setGeneration
 from vsdk.Connection import Connection
 from vsdk.VmManager import VmManager
 from vsdk.ESXInventory import ESXInventory
@@ -27,12 +24,19 @@ def getArgs():
     parser.add_argument('-v', '--vm-id', required=True, help='vm id')
     parser.add_argument('-c', '--test-cbt', required=False, action='store_true', help='Only do test could get changeId or not.')
     parser.add_argument('-e', '--change-id', default='*', help='test query disk change area api with given changeId(default: *). Note that need to single quote around the input value')
+    parser.add_argument('-d', '--disk-key', required=False, help='test specified disk with its changeId')
 
     return parser.parse_args()
 
 if __name__ == '__main__':
-    print 'Start tet cb and try to fix it'
     args = getArgs()
+
+    if args.change_id != '*' and args.disk_key is None:
+        print 'Please specification disk by disk key'
+        exit()
+
+    print 'Start tet cb and try to fix it'
+
     conn_param = dict(
         host=args.host_name,
         user=args.user,
@@ -66,6 +70,10 @@ if __name__ == '__main__':
         vmss = vmm.createSnapshot(name='test_disk_change_area', memory=False, quiesce=False)
         disks = [d for d in vmm.vmss.config.hardware.device if isinstance(d, vim.VirtualDisk)]
         print 'disk keys: {}'.format([d.key for d in disks])
+
+        if not args.disk_key is None:
+            disks = filter(lambda disk: disk.key == args.disk_key, disks)
+
         for disk in disks:
             print 'this changeId:', disk.backing.changeId
             change_id = args.change_id
