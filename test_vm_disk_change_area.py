@@ -1,5 +1,10 @@
 #! /usr/bin/python
 
+
+"""
+Need to replace magic classes like vsdk.... with origin pyvmomi library method or third-party library.
+"""
+
 import json, time, math
 import pyvddk
 from pyVmomi import vim, vmodl
