@@ -29,7 +29,7 @@ def getArgs():
     parser.add_argument('-v', '--vm-id', required=True, help='vm id')
     parser.add_argument('-c', '--test-cbt', required=False, action='store_true', help='Only do test could get changeId or not.')
     parser.add_argument('-e', '--change-id', default='*', help='test query disk change area api with given changeId(default: *). Note that need to single quote around the input value')
-    parser.add_argument('-d', '--disk-key', required=False, help='test specified disk with its changeId')
+    parser.add_argument('-d', '--disk-key', type=int, required=False, help='test specified disk with its changeId')
 
     return parser.parse_args()
 
